@@ -1,14 +1,5 @@
 # steam-tables
 
-A Clojure library designed to ... well, that part is up to you.
+A Clojure library designed to ... well ... work eventually.
 
-## Usage
-
-FIXME
-
-## License
-
-Copyright © 2015 FIXME
-
-Distributed under the Eclipse Public License either version 1.0 or (at
-your option) any later version.
+This will be updated with an actual README once this library at least pseudo-works.
