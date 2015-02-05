@@ -79,10 +79,29 @@
         (Math/pow (formula/Δ δ τ i) (- (coef/b i) 2)))))
 
 (defn- Δ-bi-δτ [δ τ i]
-  ())
+  (- (* -1 (coef/A i)
+        (coef/b i)
+        (/ 2 (coef/β i))
+        (Math/pow (formula/Δ δ τ i) (- (coef/b i) 1))
+        (- δ 1)
+        (Math/pow (Math/pow (- δ 1) 2) (- (/ 1 (* 2 (coef/β i))) 1)))
+     (* 2
+        (formula/θ δ τ i)
+        (coef/b i)
+        (- (coef/b i) 1)
+        (Math/pow (formula/Δ δ τ i) (- (coef/b i) 2))
+        (Δ-δ δ τ i))))
 
 (defn- Δ-δ [δ τ i]
-  ())
+  (* (- δ 1)
+     (+ (* (coef/A i)
+           (formula/θ δ τ i)
+           (/ 2 (coef/β i))
+           (Math/pow (Math/pow (- δ 1) 2) (- (/ 1 (* 2 (coef/β i))) 1)))
+        (* 2
+           (coef/B i)
+           (coef/a i)
+           (Math/pow (Math/pow (- δ 1) 2) (- (coef/a i) 1))))))
 
 (defn- Δ-δδ [δ τ i]
   ())
