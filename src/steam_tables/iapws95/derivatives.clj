@@ -104,7 +104,25 @@
            (Math/pow (Math/pow (- δ 1) 2) (- (coef/a i) 1))))))
 
 (defn- Δ-δδ [δ τ i]
-  ())
+  (+ (/ (Δ-δ δ τ i)
+        (- δ 1))
+     (* (Math/pow (- δ 1) 2)
+        (+ (* 4
+              (coef/B i)
+              (coef/a i)
+              (- (coef/a i) 1)
+              (Math/pow (Math/pow (- δ 1) 2) (- (coef/a i) 2)))
+           (* 2
+              (Math/pow (coef/A i) 2)
+              (Math/pow (coef/β i) -2)
+              (Math/pow (Math/pow (Math/pow (- δ 1) 2)
+                                  (- (/ 1 (* 2 (coef/β i))) 1))
+                        2))
+           (* (coef/A i)
+              (formula/θ δ τ i)
+              (/ 4 (coef/β i))
+              (- (/ 1 (* 2 (coef/β i))) 1)
+              (Math/pow (Math/pow (- δ 1) 2) (- (/ 1 (* 2 (coef/β i))) 2)))))))
 
 
 (defn- ψ-δ [δ τ i]
