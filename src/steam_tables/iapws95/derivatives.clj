@@ -70,15 +70,38 @@
 (defn ϕ-r-δδ [δ τ]
   ())
 
-(defn ϕ-r-δτ [δ τ]
-  ())
-
 (defn ϕ-r-τ [δ τ]
-  ())
+  (let [f-1 #(* (coef/n %)
+                (coef/t %)
+                (Math/pow δ (coef/d %))
+                (Math/pow τ (- (coef/t %) 1)))
+        f-2 #(* (f-1 %)
+                (Math/exp (* -1 (Math/pow δ (coef/c %)))))
+        f-3 #(* (coef/n %)
+                (Math/pow δ (coef/d %))
+                (Math/pow τ (coef/t %))
+                (Math/exp (- (* -1 (coef/α %)
+                                (Math/pow (- δ (coef/ε %)) 2))
+                             (* (coef/β %)
+                                (Math/pow (- τ (coef/γ %)) 2))))
+                (- (/ (coef/t %) τ)
+                   (* 2 (coef/β %)
+                      (- τ (coef/γ %)))))
+        f-4 #(* (coef/n %) δ
+                (+ (* (Δ-bi-τ δ τ %)
+                      (formula/ψ δ τ %))
+                   (* (Math/pow (formula/Δ δ τ %) (coef/b %))
+                      (ψ-τ δ τ %))))]
+    (+ (formula/Σ f-1 1 7)
+       (formula/Σ f-2 8 51)
+       (formula/Σ f-3 52 54)
+       (formula/Σ f-4 55 56))))
 
 (defn ϕ-r-ττ [δ τ]
   ())
 
+(defn ϕ-r-δτ [δ τ]
+  ())
 
 
 (defn- Δ-bi-δ [δ τ i]
