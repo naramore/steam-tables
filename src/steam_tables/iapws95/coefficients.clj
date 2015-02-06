@@ -1,7 +1,7 @@
 (ns steam-tables.iapws95.coefficients
   (:require [clojure.edn :as edn]))
 
-(def coefficients-file "resources\\coefficients.edn")
+(def coefficients-file "resources\\iapws95-coefficients.edn")
 
 (def coefficients (atom nil))
 
