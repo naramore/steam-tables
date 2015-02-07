@@ -4,9 +4,9 @@
               [steam-tables.iapws95.coefficients :as c])
     (:import java.lang.Math))
 
-(defn δ [ρ] (/ ρ c/ρ-c))
+(defn δ [ρ] (/ ρ (c/ρ-c)))
 
-(defn τ [T] (/ c/T-c T))
+(defn τ [T] (/ (c/T-c) T))
 
 
 (defn p [ρ T]

@@ -6,5 +6,4 @@
   :license {:name "The MIT License"
             :url "http://opensource.org/licenses/MIT"}
   :dependencies [[org.clojure/clojure "1.6.0"]]
-  :test-paths ["test"]
-  :repl-options {:init-ns steam-tables.test.iapws95})
+  :test-paths ["test"])

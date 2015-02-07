@@ -3,10 +3,10 @@
               [steam-tables.iapws95.formula :only [Σ Δ θ ψ] :as formula])
     (:import java.lang.Math))
 
-(defn ϕ-o-δ [δ]
+(defn ϕ-o-δ [δ τ]
   (/ 1 δ))
 
-(defn ϕ-o-δδ [δ]
+(defn ϕ-o-δδ [δ τ]
   (/ -1 (* δ δ)))
 
 (defn ϕ-o-τ [δ τ]
@@ -18,7 +18,7 @@
   (+ (* (coef/n-o 3) (/ -1 (Math/pow τ 2)))
      (formula/Σ (partial f-o-ττ δ τ) 4 8)))
 
-(defn ϕ-o-δτ [] 0)
+(defn ϕ-o-δτ [δ τ] 0)
 
 (defn- f-o-τ [δ τ i]
   (* (coef/n-o i)
