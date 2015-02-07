@@ -1,6 +1,10 @@
 (defproject steam-tables "0.1.0-SNAPSHOT"
-  :description "FIXME: write description"
-  :url "http://example.com/FIXME"
-  :license {:name "Eclipse Public License"
-            :url "http://www.eclipse.org/legal/epl-v10.html"}
-  :dependencies [[org.clojure/clojure "1.6.0"]])
+  :description "Implementation of the IAPWS (International Association for the
+                Properties of Water and Steam) Formulations for the Thermodynamic
+                Properties of Ordinary Water and Steam (IAPWS-95 & IAPWS-IF97)"
+  :url "https://github.com/naramore/steam-tables"
+  :license {:name "The MIT License"
+            :url "http://opensource.org/licenses/MIT"}
+  :dependencies [[org.clojure/clojure "1.6.0"]]
+  :test-paths ["test"]
+  :repl-options {:init-ns steam-tables.test.iapws95})
