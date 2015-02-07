@@ -56,7 +56,7 @@
     (let [delta (properties/δ (:rho table-6))
           tau (properties/τ (:T table-6))]
       (do
-        (coefficients/initialize-coefficients! "C:\\Users\\Michael Naramore\\Documents\\GitHub\\steam-tables\\resources\\iapws95-coefficients.edn")
+        (coefficients/initialize-coefficients!)
         (is (= table-6
                {:T        500                              :rho      838.025
                 :phi-o    (formula/ϕ-o delta tau)          :phi-r    (formula/ϕ-r delta tau)

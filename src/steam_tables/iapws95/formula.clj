@@ -6,7 +6,7 @@
     "Represents the ideal-gas part of the dimensionless Helmhotlz free enegery (Eq. 5, IAPWS95-2014.pdf)"
     (+ (Math/log δ)
        (coef/n-o 1)
-       (coef/n-o 2)
+       (* (coef/n-o 2) τ)
        (* (coef/n-o 3) (Math/log τ))
        (Σ (partial f-o τ) 4 8)))
 
