@@ -71,7 +71,8 @@
 (defn ϕ-r-δδ [δ τ]
   (let [f-1 #(* (coef/n %)
                 (coef/d %)
-                (Math/pow δ (- (coef/d %) 1))
+                (- (coef/d %) 1)
+                (Math/pow δ (- (coef/d %) 2))
                 (Math/pow τ (coef/t %)))
         f-2 #(* (coef/n %)
                 (Math/exp (* -1 (Math/pow δ (coef/c %))))

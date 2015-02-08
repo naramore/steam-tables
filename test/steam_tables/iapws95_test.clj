@@ -32,9 +32,11 @@
               { :T 900  :rho 0.5261500E+2  :p 0.200000690E+2  :c-v 0.193510526E+1  :w 0.698445674E+3  :s 0.659070225E+1 }
               { :T 900  :rho 0.8707690E+3  :p 0.700000006E+3  :c-v 0.266422350E+1  :w 0.201933608E+4  :s 0.417223802E+1 }])
 
-(def table-7-functions {:p   #(* (properties/p %1 %2) 1.0E-3) ; kPa --> MPa conversion
+(def table-7-functions {:p   #(* (properties/p %1 %2)
+                                 1.0E-3) ; kPa --> MPa conversion
                         :c-v properties/c-v
-                        :w   properties/w
+                        :w   #(* (properties/w %1 %2)
+                                 (Math/sqrt 1000))
                         :s   properties/s})
 
 (def table-8 [{:T       275
@@ -62,50 +64,63 @@
                :s-f     0.380194683E+1
                :s-g     0.518506121E+1}])
 
-(defn scientific-compare [x y]
-  (let [f #(format "%.8e" %)]
+(defn scientific-compare [x y p]
+  (let [f #(format (str "%." p "e") %)]
     (= (f x) (f y))))
+
+(defn test-table-7-property [k p]
+  (every? #(= % true)
+          (map #(scientific-compare (k %)
+                                    ((k table-7-functions) (:rho %)
+                                                           (:T %)) p) table-7)))
 
 (deftest helmholtz-free-energy-parts-test
   (do
     (coefficients/initialize-coefficients!)
     (let [delta (properties/δ (:rho table-6))
           tau (properties/τ (:T table-6))
-          c #(scientific-compare (% table-6)
-                                 ((% table-6-functions) delta tau))]
+          my-compare #(scientific-compare (% table-6)
+                                          ((% table-6-functions) delta tau) 8)]
       (testing "the dimensionless Helmholtz free energy: "
         (testing "ideal-gas part --"
           (testing "normal function"
-            (is (c :phi-o)))
+            (is (my-compare :phi-o)))
           (testing "1st derivative wrt δ"
-            (is (c :phi-o-d)))
+            (is (my-compare :phi-o-d)))
           (testing "2nd derivative wrt δ & δ"
-            (is (c :phi-o-dd)))
+            (is (my-compare :phi-o-dd)))
           (testing "1st derivative wrt τ"
-            (is (c :phi-o-t)))
+            (is (my-compare :phi-o-t)))
           (testing "2nd derivative wrt τ & τ"
-            (is (c :phi-o-tt)))
+            (is (my-compare :phi-o-tt)))
           (testing "2nd derivative wrt δ & τ"
-            (is (c :phi-o-dt))))
+            (is (my-compare :phi-o-dt))))
         (testing "residual part --"
           (testing "normal function"
-            (is (c :phi-r)))
+            (is (my-compare :phi-r)))
           (testing "1st derivative wrt δ"
-            (is (c :phi-r-d)))
+            (is (my-compare :phi-r-d)))
           (testing "2nd derivative wrt δ & δ"
-            (is (c :phi-r-dd)))
+            (is (my-compare :phi-r-dd)))
           (testing "1st derivative wrt τ"
-            (is (c :phi-r-t)))
+            (is (my-compare :phi-r-t)))
           (testing "2nd derivative wrt τ & τ"
-            (is (c :phi-r-tt)))
+            (is (my-compare :phi-r-tt)))
           (testing "2nd derivative wrt δ & τ"
-            (is (c :phi-r-dt))))))))
+            (is (my-compare :phi-r-dt))))))))
 
 (deftest single-phase-thermodynamic-property-test
-  (testing "that the pressure [MPa], isochoric heat capacity [kJ/kg-K], speed of
-            sound [m/s], and entropy [kJ/kg-K] in the single-phase region
-            correspond to the table-7 values"
-    (is (= true true))))
+  (do
+    (coefficients/initialize-coefficients!)
+    (testing "the single-phase thermodynamic property:"
+      (testing "pressure, p [MPa]"
+        (is (test-table-7-property :p 8)))
+      (testing "isochoric heat capacity, c-v [kJ/kg-K]"
+        (is (test-table-7-property :c-v 8)))
+      (testing "speed of sound, w [m/s]"
+        (is (test-table-7-property :w 8)))
+      (testing "entropy, s [kJ/kg-K]"
+        (is (test-table-7-property :s 8))))))
 
 (deftest two-phase-thermodynamic-property-test
   (testing "todo"
