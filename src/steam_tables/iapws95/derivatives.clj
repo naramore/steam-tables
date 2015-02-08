@@ -15,7 +15,8 @@
      (formula/Σ (partial f-o-τ δ τ) 4 8)))
 
 (defn ϕ-o-ττ [δ τ]
-  (+ (* (coef/n-o 3) (/ -1 (Math/pow τ 2)))
+  (- (* -1 (coef/n-o 3)
+        (Math/pow τ -2))
      (formula/Σ (partial f-o-ττ δ τ) 4 8)))
 
 (defn ϕ-o-δτ [δ τ] 0)
@@ -236,10 +237,12 @@
 
 (defn- Δ-bi-δδ [δ τ i]
   (* (coef/b i)
-     (+ (* (Math/pow (formula/Δ δ τ i) (- (coef/b i) 1))
+     (+ (* (Math/pow (formula/Δ δ τ i)
+                     (- (coef/b i) 1))
            (Δ-δδ δ τ i))
         (* (- (coef/b i) 1)
-           (Math/pow (formula/Δ δ τ i) (- (coef/b i) 2))
+           (Math/pow (formula/Δ δ τ i)
+                     (- (coef/b i) 2))
            (Math/pow (Δ-δ δ τ i) 2)))))
 
 (defn- Δ-bi-τ [δ τ i]
@@ -251,25 +254,30 @@
 (defn- Δ-bi-ττ [δ τ i]
   (+ (* 2
         (coef/b i)
-        (Math/pow (formula/Δ δ τ i) (- (coef/b i) 1)))
+        (Math/pow (formula/Δ δ τ i)
+                  (- (coef/b i) 1)))
      (* 4
         (Math/pow (formula/θ δ τ i) 2)
         (coef/b i)
         (- (coef/b i) 1)
-        (Math/pow (formula/Δ δ τ i) (- (coef/b i) 2)))))
+        (Math/pow (formula/Δ δ τ i)
+                  (- (coef/b i) 2)))))
 
 (defn- Δ-bi-δτ [δ τ i]
   (- (* -1 (coef/A i)
         (coef/b i)
         (/ 2 (coef/β i))
-        (Math/pow (formula/Δ δ τ i) (- (coef/b i) 1))
+        (Math/pow (formula/Δ δ τ i)
+                  (- (coef/b i) 1))
         (- δ 1)
-        (Math/pow (Math/pow (- δ 1) 2) (- (/ 1 (* 2 (coef/β i))) 1)))
+        (Math/pow (Math/pow (- δ 1) 2)
+                  (- (/ 1 (* 2 (coef/β i))) 1)))
      (* 2
         (formula/θ δ τ i)
         (coef/b i)
         (- (coef/b i) 1)
-        (Math/pow (formula/Δ δ τ i) (- (coef/b i) 2))
+        (Math/pow (formula/Δ δ τ i)
+                  (- (coef/b i) 2))
         (Δ-δ δ τ i))))
 
 (defn- Δ-δ [δ τ i]
@@ -277,11 +285,13 @@
      (+ (* (coef/A i)
            (formula/θ δ τ i)
            (/ 2 (coef/β i))
-           (Math/pow (Math/pow (- δ 1) 2) (- (/ 1 (* 2 (coef/β i))) 1)))
+           (Math/pow (Math/pow (- δ 1) 2)
+                     (- (/ 1 (* 2 (coef/β i))) 1)))
         (* 2
            (coef/B i)
            (coef/a i)
-           (Math/pow (Math/pow (- δ 1) 2) (- (coef/a i) 1))))))
+           (Math/pow (Math/pow (- δ 1) 2)
+                     (- (coef/a i) 1))))))
 
 (defn- Δ-δδ [δ τ i]
   (+ (/ (Δ-δ δ τ i)
@@ -296,13 +306,13 @@
               (Math/pow (coef/A i) 2)
               (Math/pow (coef/β i) -2)
               (Math/pow (Math/pow (Math/pow (- δ 1) 2)
-                                  (- (/ 1 (* 2 (coef/β i))) 1))
-                        2))
+                                  (- (/ 1 (* 2 (coef/β i))) 1)) 2))
            (* (coef/A i)
               (formula/θ δ τ i)
               (/ 4 (coef/β i))
               (- (/ 1 (* 2 (coef/β i))) 1)
-              (Math/pow (Math/pow (- δ 1) 2) (- (/ 1 (* 2 (coef/β i))) 2)))))))
+              (Math/pow (Math/pow (- δ 1) 2)
+                        (- (/ 1 (* 2 (coef/β i))) 2)))))))
 
 
 (defn- ψ-δ [δ τ i]
@@ -312,24 +322,28 @@
      (formula/ψ δ τ i)))
 
 (defn- ψ-δδ [δ τ i]
-  (* (- (* 2 (coef/C i) (Math/pow (- δ 1) 2)) 1)
+  (* (- (* 2
+           (coef/C i)
+           (Math/pow (- δ 1) 2)) 1)
      2
      (coef/C i)
      (formula/ψ δ τ i)))
 
-(defn- ψ-δτ [δ τ i]
+(defn- ψ-τ [δ τ i]
   (* -2
      (coef/D i)
      (- τ 1)
      (formula/ψ δ τ i)))
 
-(defn- ψ-τ [δ τ i]
-  (* (- (* 2 (coef/D i) (Math/pow (- τ 1) 2)) 1)
+(defn- ψ-ττ [δ τ i]
+  (* (- (* 2
+           (coef/D i)
+           (Math/pow (- τ 1) 2)) 1)
      2
      (coef/D i)
      (formula/ψ δ τ i)))
 
-(defn- ψ-ττ [δ τ i]
+(defn- ψ-δτ [δ τ i]
   (* 4
      (coef/C i)
      (coef/D i)

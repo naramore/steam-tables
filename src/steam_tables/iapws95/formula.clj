@@ -27,7 +27,7 @@
 
 (defn- f-r-2 [δ τ i]
     (* (f-r-1 δ τ i)
-       (Math/exp (* -1 (Math/exp (* δ (coef/c i)))))))
+       (Math/exp (* -1 (Math/pow δ (coef/c i))))))
 
 (defn- f-r-3 [δ τ i]
     (* (f-r-1 δ τ i)
