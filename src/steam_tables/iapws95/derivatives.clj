@@ -19,7 +19,7 @@
         (Math/pow τ -2))
      (formula/Σ (partial f-o-ττ δ τ) 4 8)))
 
-(defn ϕ-o-δτ [δ τ] 0)
+(defn ϕ-o-δτ [δ τ] 0.0)
 
 (defn- f-o-τ [δ τ i]
   (* (coef/n-o i)

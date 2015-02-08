@@ -11,7 +11,14 @@
               :phi-o-dd -0.147637878E+0   :phi-r-dd  0.856063701E+0
               :phi-o-t   0.904611106E+1   :phi-r-t  -0.581403435E+1
               :phi-o-tt -0.193249185E+1   :phi-r-tt -0.223440737E+1
-              :phi-o-dt  0                :phi-r-dt -0.112176915E+1})
+              :phi-o-dt  0.0              :phi-r-dt -0.112176915E+1})
+
+(def table-6-functions {:phi-o    formula/ϕ-o          :phi-r    formula/ϕ-r
+                        :phi-o-d  derivatives/ϕ-o-δ    :phi-r-d  derivatives/ϕ-r-δ
+                        :phi-o-dd derivatives/ϕ-o-δδ   :phi-r-dd derivatives/ϕ-r-δδ
+                        :phi-o-t  derivatives/ϕ-o-τ    :phi-r-t  derivatives/ϕ-r-τ
+                        :phi-o-tt derivatives/ϕ-o-ττ   :phi-r-tt derivatives/ϕ-r-ττ
+                        :phi-o-dt derivatives/ϕ-o-δτ   :phi-r-dt derivatives/ϕ-r-δτ})
 
 (def table-7 [{ :T 300  :rho 0.9965560E+3  :p 0.992418352E-1  :c-v 0.413018112E+1  :w 0.150151914E+4  :s 0.393062643E+0 }
               { :T 300  :rho 0.1005308E+4  :p 0.200022515E+2  :c-v 0.406798347E+1  :w 0.153492501E+4  :s 0.387405401E+0 }
@@ -24,6 +31,11 @@
               { :T 900  :rho 0.2410000E+0  :p 0.100062559E+0  :c-v 0.175890657E+1  :w 0.724027147E+3  :s 0.916653194E+1 }
               { :T 900  :rho 0.5261500E+2  :p 0.200000690E+2  :c-v 0.193510526E+1  :w 0.698445674E+3  :s 0.659070225E+1 }
               { :T 900  :rho 0.8707690E+3  :p 0.700000006E+3  :c-v 0.266422350E+1  :w 0.201933608E+4  :s 0.417223802E+1 }])
+
+(def table-7-functions {:p   #(* (properties/p %1 %2) 1.0E-3) ; kPa --> MPa conversion
+                        :c-v properties/c-v
+                        :w   properties/w
+                        :s   properties/s})
 
 (def table-8 [{:T       275
                :p-s     0.698451167E-3
@@ -50,21 +62,44 @@
                :s-f     0.380194683E+1
                :s-g     0.518506121E+1}])
 
+(defn scientific-compare [x y]
+  (let [f #(format "%.8e" %)]
+    (= (f x) (f y))))
+
 (deftest helmholtz-free-energy-parts-test
-  (testing "that the ideal-gas and residual parts of the dimensionless Helmholtz
-            free energy and their derivatives correspond to the table-6 values"
+  (do
+    (coefficients/initialize-coefficients!)
     (let [delta (properties/δ (:rho table-6))
-          tau (properties/τ (:T table-6))]
-      (do
-        (coefficients/initialize-coefficients!)
-        (is (= table-6
-               {:T        500                              :rho      838.025
-                :phi-o    (formula/ϕ-o delta tau)          :phi-r    (formula/ϕ-r delta tau)
-                :phi-o-d  (derivatives/ϕ-o-δ delta tau)    :phi-r-d  (derivatives/ϕ-r-δ delta tau)
-                :phi-o-dd (derivatives/ϕ-o-δδ delta tau)   :phi-r-dd (derivatives/ϕ-r-δδ delta tau)
-                :phi-o-t  (derivatives/ϕ-o-τ delta tau)    :phi-r-t  (derivatives/ϕ-r-τ delta tau)
-                :phi-o-tt (derivatives/ϕ-o-ττ delta tau)   :phi-r-tt (derivatives/ϕ-r-ττ delta tau)
-                :phi-o-dt (derivatives/ϕ-o-δτ delta tau)   :phi-r-dt (derivatives/ϕ-r-δτ delta tau)}))))))
+          tau (properties/τ (:T table-6))
+          c #(scientific-compare (% table-6)
+                                 ((% table-6-functions) delta tau))]
+      (testing "the dimensionless Helmholtz free energy: "
+        (testing "ideal-gas part --"
+          (testing "normal function"
+            (is (c :phi-o)))
+          (testing "1st derivative wrt δ"
+            (is (c :phi-o-d)))
+          (testing "2nd derivative wrt δ & δ"
+            (is (c :phi-o-dd)))
+          (testing "1st derivative wrt τ"
+            (is (c :phi-o-t)))
+          (testing "2nd derivative wrt τ & τ"
+            (is (c :phi-o-tt)))
+          (testing "2nd derivative wrt δ & τ"
+            (is (c :phi-o-dt))))
+        (testing "residual part --"
+          (testing "normal function"
+            (is (c :phi-r)))
+          (testing "1st derivative wrt δ"
+            (is (c :phi-r-d)))
+          (testing "2nd derivative wrt δ & δ"
+            (is (c :phi-r-dd)))
+          (testing "1st derivative wrt τ"
+            (is (c :phi-r-t)))
+          (testing "2nd derivative wrt τ & τ"
+            (is (c :phi-r-tt)))
+          (testing "2nd derivative wrt δ & τ"
+            (is (c :phi-r-dt))))))))
 
 (deftest single-phase-thermodynamic-property-test
   (testing "that the pressure [MPa], isochoric heat capacity [kJ/kg-K], speed of
