@@ -5,6 +5,15 @@
             [steam-tables.iapws95.derivatives :as derivatives :refer :all]
             [steam-tables.iapws95.coefficients :as coefficients :refer :all]))
 
+;; The following tests are taken from:  http://www.iapws.org/relguide/IAPWS95-2014.pdf
+;; Table 6, Table 7, and Table 8
+
+;; Table 6. Values for the ideal-gas part ϕ-o, Eq. (5), and for the residual part ϕ-r,
+;;          Eq. (6), of the dimensionless Helmholtz free energy together with the
+;;          corresponding derivativesa for T = 500 K and ρ = 838.025 kg/m^3
+;;
+;; For the abbreviated notation of the derivatives of ϕ-o and ϕ-r see the footnotes of Tables 4 and
+;; 5, respectively.
 (def table-6 {:T         500              :rho       838.025
               :phi-o     0.204797733E+1   :phi-r    -0.342693206E+1
               :phi-o-d   0.384236747E+0   :phi-r-d  -0.364366650E+0
@@ -13,6 +22,7 @@
               :phi-o-tt -0.193249185E+1   :phi-r-tt -0.223440737E+1
               :phi-o-dt  0.0              :phi-r-dt -0.112176915E+1})
 
+;; This is a map of keys to functions from the table-6 map
 (def table-6-functions {:phi-o    formula/ϕ-o          :phi-r    formula/ϕ-r
                         :phi-o-d  derivatives/ϕ-o-δ    :phi-r-d  derivatives/ϕ-r-δ
                         :phi-o-dd derivatives/ϕ-o-δδ   :phi-r-dd derivatives/ϕ-r-δδ
@@ -20,6 +30,11 @@
                         :phi-o-tt derivatives/ϕ-o-ττ   :phi-r-tt derivatives/ϕ-r-ττ
                         :phi-o-dt derivatives/ϕ-o-δτ   :phi-r-dt derivatives/ϕ-r-δτ})
 
+;; Table 7. Thermodynamic property values in the single-phase region for selected values of T and ρ
+;;
+;; In the liquid-water region at low pressures small changes in density along an isotherm cause large changes in pressure.
+;; For this reason, due to an accumulation of small errors, a particular computer code or a particular PC may fail to
+;; reproduce the pressure value with nine significant figures.
 (def table-7 [{ :T 300  :rho 0.9965560E+3  :p 0.992418352E-1  :c-v 0.413018112E+1  :w 0.150151914E+4  :s 0.393062643E+0 }
               { :T 300  :rho 0.1005308E+4  :p 0.200022515E+2  :c-v 0.406798347E+1  :w 0.153492501E+4  :s 0.387405401E+0 }
               { :T 300  :rho 0.1188202E+4  :p 0.700004704E+3  :c-v 0.346135580E+1  :w 0.244357992E+4  :s 0.132609616E+0 }
@@ -32,6 +47,7 @@
               { :T 900  :rho 0.5261500E+2  :p 0.200000690E+2  :c-v 0.193510526E+1  :w 0.698445674E+3  :s 0.659070225E+1 }
               { :T 900  :rho 0.8707690E+3  :p 0.700000006E+3  :c-v 0.266422350E+1  :w 0.201933608E+4  :s 0.417223802E+1 }])
 
+;; This is a mpa of keys to functions from the table-7 map
 (def table-7-functions {:p   #(* (properties/p %1 %2)
                                  1.0E-3) ; kPa --> MPa conversion
                         :c-v properties/c-v
@@ -39,6 +55,11 @@
                                  (Math/sqrt 1000))
                         :s   properties/s})
 
+;; Table 8. Thermodynamic property values in the two-phase region for selected values of
+;;          temperature
+;;
+;; All these test values were calculated from the Helmholtz free energy, Eq. (4), by applying the phase-
+;; equilibrium condition (Maxwell criterion).
 (def table-8 [{:T       275
                :p-s     0.698451167E-3
                :rho-f   0.999887406E+3
@@ -65,15 +86,19 @@
                :s-g     0.518506121E+1}])
 
 (defn scientific-compare [x y p]
+  "Compares two values, x & y, by formatting them to scientific notation with precision, p"
   (let [f #(format (str "%." p "e") %)]
     (= (f x) (f y))))
 
 (defn test-table-7-property [k p]
+  "Tests the property, selected by the keyword k, at the precision, p"
   (every? #(= % true)
           (map #(scientific-compare (k %)
                                     ((k table-7-functions) (:rho %)
                                                            (:T %)) p) table-7)))
 
+;; Test for the ideal-gas and residual parts of the dimensionless Helmholtz
+;; free energy equation as compared to Table 6. values
 (deftest helmholtz-free-energy-parts-test
   (do
     (coefficients/initialize-coefficients!)
@@ -109,6 +134,8 @@
           (testing "2nd derivative wrt δ & τ"
             (is (my-compare :phi-r-dt))))))))
 
+;; Test that the single-phase thermodynamic properties line up with
+;; the Table 7. values
 (deftest single-phase-thermodynamic-property-test
   (do
     (coefficients/initialize-coefficients!)
@@ -122,6 +149,8 @@
       (testing "entropy, s [kJ/kg-K]"
         (is (test-table-7-property :s 8))))))
 
+;; Test that the two-phase thermodynamic properties line up with
+;; the Table 8. values
 (deftest two-phase-thermodynamic-property-test
   (testing "todo"
     (is (= true true))))

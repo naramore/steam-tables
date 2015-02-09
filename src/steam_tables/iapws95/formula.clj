@@ -3,7 +3,7 @@
     (:import java.lang.Math))
 
 (defn ϕ-o [δ τ]
-    "Represents the ideal-gas part of the dimensionless Helmhotlz free enegery (Eq. 5, IAPWS95-2014.pdf)"
+    "The ideal-gas part of the dimensionless Helmhotlz free enegery equation (Eq. 5, IAPWS95-2014.pdf)"
     (+ (Math/log δ)
        (coef/n-o 1)
        (* (coef/n-o 2) τ)
