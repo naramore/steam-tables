@@ -97,6 +97,20 @@
                                     ((k table-7-functions) (:rho %)
                                                            (:T %)) p) table-7)))
 
+(defn table-7-compare [k p]
+  (let [my-compare #(scientific-compare (k %)
+                                        ((k table-7-functions) (:rho %)
+                                                               (:T %)) p)
+        my-temp #(:T %)
+        my-rho #(:rho %)]
+    (map #(hash-map :T (my-temp %)
+                    :rho (my-rho %)
+                    :same (my-compare %)) table-7)))
+
+(defn table-7-test [k p]
+  (map #(testing (str "@ T = " (:T %) " K, & rho = " (:rho %) "kg/m^3") (is (:same %)))
+       (testing-compare k p)))
+
 ;; Test for the ideal-gas and residual parts of the dimensionless Helmholtz
 ;; free energy equation as compared to Table 6. values
 (deftest helmholtz-free-energy-parts-test
@@ -140,14 +154,14 @@
   (do
     (coefficients/initialize-coefficients!)
     (testing "the single-phase thermodynamic property:"
-      (testing "pressure, p [MPa]"
-        (is (test-table-7-property :p 8)))
-      (testing "isochoric heat capacity, c-v [kJ/kg-K]"
-        (is (test-table-7-property :c-v 8)))
-      (testing "speed of sound, w [m/s]"
-        (is (test-table-7-property :w 8)))
-      (testing "entropy, s [kJ/kg-K]"
-        (is (test-table-7-property :s 8))))))
+      (testing "pressure, p [MPa] --> "
+        (table-7-test :p 8))
+      (testing "isochoric heat capacity, c-v [kJ/kg-K] --> "
+        (table-7-test :c-v 8))
+      (testing "speed of sound, w [m/s] --> "
+        (table-7-test :w 8))
+      (testing "entropy, s [kJ/kg-K] --> "
+        (table-7-test :s 8)))))
 
 ;; Test that the two-phase thermodynamic properties line up with
 ;; the Table 8. values
